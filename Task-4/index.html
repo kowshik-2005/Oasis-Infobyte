@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculator</title>
+
+<style>
+    body {
+        background: #5c8db8;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        font-family: Arial, sans-serif;
+    }
+
+    .calculator {
+        background: #e3ecf5;
+        padding: 20px;
+        border-radius: 20px;
+        width: 320px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .display {
+        background: #cfddeb;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: right;
+        font-size: 28px;
+        margin-bottom: 15px;
+        height: 50px;
+        overflow-x: auto;
+    }
+
+    .buttons {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+    }
+
+    button {
+        padding: 15px;
+        font-size: 16px;
+        border: none;
+        border-radius: 10px;
+        background: #bcd2e8;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    button:hover {
+        background: #9dbfdd;
+    }
+
+    .operator {
+        background: #89b3d9;
+    }
+
+    .equal {
+        grid-column: span 2;
+        background: #4a84b5;
+        color: white;
+    }
+</style>
+</head>
+<body>
+
+<div class="calculator">
+    <div class="display" id="display">0</div>
+
+    <div class="buttons">
+        <button>(</button>
+        <button>)</button>
+        <button id="ans">ans</button>
+        <button id="del">del</button>
+        <button id="clear">clear</button>
+
+        <button>7</button>
+        <button>8</button>
+        <button>9</button>
+        <button class="operator">%</button>
+        <button class="operator">√</button>
+
+        <button>4</button>
+        <button>5</button>
+        <button>6</button>
+        <button class="operator">*</button>
+        <button class="operator">/</button>
+
+        <button>1</button>
+        <button>2</button>
+        <button>3</button>
+        <button class="operator">+</button>
+        <button class="operator">-</button>
+
+        <button>.</button>
+        <button>0</button>
+        <button>±</button>
+        <button class="equal" id="equals">ENTER</button>
+    </div>
+</div>
+
+<script>
+    const display = document.getElementById("display");
+    const buttons = document.querySelectorAll("button");
+    let lastAnswer = 0;
+
+    buttons.forEach(button => {
+        button.addEventListener("click", () => {
+            const value = button.textContent;
+
+            if (value === "clear") {
+                display.textContent = "0";
+            }
+
+            else if (value === "del") {
+                display.textContent = display.textContent.slice(0, -1) || "0";
+            }
+
+            else if (value === "ENTER") {
+                try {
+                    let expression = display.textContent
+                        .replace("√", "Math.sqrt")
+                        .replace("%", "/100");
+
+                    lastAnswer = eval(expression);
+                    display.textContent = lastAnswer;
+                } catch {
+                    display.textContent = "Error";
+                }
+            }
+
+            else if (value === "ans") {
+                display.textContent += lastAnswer;
+            }
+
+            else if (value === "±") {
+                display.textContent = 
+                    display.textContent.startsWith("-") 
+                    ? display.textContent.slice(1) 
+                    : "-" + display.textContent;
+            }
+
+            else {
+                if (display.textContent === "0")
+                    display.textContent = value;
+                else
+                    display.textContent += value;
+            }
+        });
+    });
+
+    // Keyboard Support
+    document.addEventListener("keydown", (e) => {
+        if (!isNaN(e.key) || "+-*/.%()".includes(e.key)) {
+            display.textContent += e.key;
+        }
+        if (e.key === "Enter") {
+            document.getElementById("equals").click();
+        }
+        if (e.key === "Backspace") {
+            document.getElementById("del").click();
+        }
+    });
+</script>
+
+</body>
+</html>
